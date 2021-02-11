@@ -57,6 +57,21 @@ while (friends_count - offset > 0) {{
 return user_friends;
 """
 
+get_groups_script = """
+var user_ids = {user_ids};
+var user_groups = [];
+var i = 0;
+while ((i < 25) && (i < user_ids.length)) {{
+    var groups = API.groups.get({{
+        "user_id": user_ids[i], 
+        "count": 30
+    }})["items"];
+    user_groups = user_groups + [groups];
+    i = i + 1;
+}}
+return user_groups;
+"""
+
 
 ##########################################
 
@@ -95,3 +110,11 @@ class Parser:
                     user_friends[user_id] = self.get_many_friends(user_id)
         return user_friends
 
+    def get_users_groups(self, user_ids: List[int]) -> Dict[int, List[int]]:
+        ids_pack = [user_ids[i: i + 25] for i in range(0, len(user_ids), 25)]
+        user_groups = dict()
+        for pack in ids_pack:
+            users_groups = self.api.execute(get_groups_script.format(user_ids=str(pack)))
+            for user_id, groups in zip(pack, users_groups):
+                user_groups[user_id] = groups
+        return user_groups
