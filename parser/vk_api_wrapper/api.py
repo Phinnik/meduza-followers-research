@@ -1,0 +1,26 @@
+import requests
+import time
+
+__all__ = ['API']
+
+
+class API:
+    def __init__(self, access_token: str):
+        self._access_token = access_token
+        self._session = requests.Session()
+
+    def _call(self, method_name: str, params: dict = None):
+        params = params or dict()
+        api_url = f'https://api.vk.com/method/{method_name}'
+        params = {k: v for k, v in params.items() if v is not None}
+        params['v'] = '5.126'
+        params['access_token'] = self._access_token
+        request_time_start = time.time()
+        response = self._session.get(api_url, params=params).json()
+        delay = 1 / 2.5 - (time.time() - request_time_start)
+        if delay > 0:
+            time.sleep(delay)
+        if 'error' in response:
+            raise Exception(response['error'])
+        else:
+            return response['response']
