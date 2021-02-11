@@ -13,6 +13,7 @@ class API:
         params = params or dict()
         api_url = f'https://api.vk.com/method/{method_name}'
         params = {k: v for k, v in params.items() if v is not None}
+        params.pop('self', None)
         params['v'] = '5.126'
         params['access_token'] = self._access_token
         request_time_start = time.time()
@@ -24,3 +25,11 @@ class API:
             raise Exception(response['error'])
         else:
             return response['response']
+
+    def execute(self, code: str):
+        params = locals()
+        return self._call('execute', params)
+
+    def groups_get_members(self, group_id: int):
+        params = locals()
+        return self._call('groups.getMembers', params)
