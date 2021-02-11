@@ -17,7 +17,7 @@ class API:
         params['v'] = '5.126'
         params['access_token'] = self._access_token
         request_time_start = time.time()
-        response = self._session.get(api_url, params=params).json()
+        response = self._session.post(api_url, params=params).json()
         delay = 1 / 2.5 - (time.time() - request_time_start)
         if delay > 0:
             time.sleep(delay)
