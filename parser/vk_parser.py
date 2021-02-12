@@ -1,5 +1,7 @@
 from vk_api_wrapper import API
 from typing import List, Dict
+from datetime import datetime
+from dataclasses import dataclass
 
 # VK scripts
 ##########################################
@@ -89,6 +91,55 @@ return users_data;
 
 ##########################################
 
+@dataclass
+class UserData:
+    user_id: int
+    is_closed: bool
+    sex: int
+    birth_date: datetime
+    verified: bool
+    city: str
+    country: str
+    university_name: str
+    faculty_name: str
+    last_seen: datetime
+    can_write_private_message: bool
+    can_send_friend_request: bool
+    followers_count: int
+    friends_count: int
+
+    @classmethod
+    def from_users_get(cls, data):
+        user_id = data.get('id', None)
+        is_closed = data.get('is_closed', None)
+        sex = data.get('sex', None)
+
+        # sometimes birth date has bugs in vk
+        birth_date = data.get('bdate', '')
+        try:
+            if birth_date.count('.') == 2:
+                birth_date = datetime.strptime(birth_date, '%d.%m.%Y')
+            elif birth_date.count('.') == 1:
+                birth_date = datetime.strptime(birth_date, '%d.%m')
+            else:
+                birth_date = None
+        except ValueError:
+            birth_date = None
+
+        verified = data.get('verified', None)
+        city = data.get('city', dict()).get('title', None)
+        country = data.get('country', dict()).get('title')
+        university_name = data.get('university_name', None)
+        faculty_name = data.get('faculty_name', None)
+        last_seen = data.get('last_seen', dict()).get('time', 0)
+        last_seen = datetime.fromtimestamp(last_seen)
+        can_write_private_message = bool(data.get('can_write_private_message', None))
+        can_send_friend_request = bool(data.get('can_send_friend_request', None))
+        followers_count = data.get('followers_count', None)
+        friends_count = data.get('friends_count', None)
+        return cls(user_id, is_closed, sex, birth_date, verified, city, country, university_name, faculty_name,
+                   last_seen, can_write_private_message, can_send_friend_request, followers_count, friends_count)
+
 
 class Parser:
     def __init__(self, access_token: str):
@@ -135,11 +186,10 @@ class Parser:
 
     def get_users_data(self, user_ids: List[int]):
         user_packs = [user_ids[i:i + 1000] for i in range(0, len(user_ids), 1000)]
-        users_data = dict()
+        users_data = []
         for pack in user_packs:
-            data = self.api.users_get(pack, fields=['sex, bdate', 'verified', 'city', 'country', 'education',
+            data = self.api.users_get(pack, fields=['sex', 'bdate', 'verified', 'city', 'country', 'education',
                                                     'last_seen', 'followers_count', 'can_write_private_message',
                                                     'can_send_friend_request'])
-            for d in data:
-                users_data[d['id']] = d
+            users_data.extend([UserData.from_users_get(d) for d in data])
         return users_data
