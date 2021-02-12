@@ -38,8 +38,9 @@ class API:
     def users_get(self, user_ids: List[int], fields: List[str] = None):
         params = {
             'user_ids': str(user_ids)[1:-1].replace(' ', ''),
-            'fields': None if fields is None else str(fields)[1:-1]
+            'fields': None if fields is None else ','.join(fields)
         }
+        print(params)
         return self._call('users.get', params)
 
     def messages_send(self, user_id: int, message: str):
