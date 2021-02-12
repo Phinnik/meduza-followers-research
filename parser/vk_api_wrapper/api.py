@@ -40,7 +40,6 @@ class API:
             'user_ids': str(user_ids)[1:-1].replace(' ', ''),
             'fields': None if fields is None else ','.join(fields)
         }
-        print(params)
         return self._call('users.get', params)
 
     def messages_send(self, user_id: int, message: str):
