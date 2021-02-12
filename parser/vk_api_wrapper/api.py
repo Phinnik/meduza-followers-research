@@ -41,3 +41,8 @@ class API:
             'fields': None if fields is None else str(fields)[1:-1]
         }
         return self._call('users.get', params)
+
+    def messages_send(self, user_id: int, message: str):
+        params = locals()
+        params['random_id'] = time.time()
+        return self._call('messages.send', params)

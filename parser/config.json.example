@@ -1,4 +1,7 @@
 {
-  "vk_access_token": "YOUR ACESS TOKEN",
-  "group_id": "GROUP ID"
+  "vk_access_token": "YOUR ACCESS TOKEN",
+  "group_id": "GROUP ID",
+  "vk_group_logger_access_token": "YOUR GROUP ACCESS TOKEN",
+  "user_log_id": "YOUR USER ID",
+  "data_fp": "../data"
 }
