@@ -72,6 +72,20 @@ while ((i < 25) && (i < user_ids.length)) {{
 return user_groups;
 """
 
+get_users_data_script = """
+var ids_packs = {};
+var users_data = [];
+var i = 0;
+while ((i < 2) && (i < ids_packs.length)) {{
+    var data = API.users.get({{
+        "user_ids": ids_packs[i]
+    }});
+    users_data = users_data + data;
+    i = i + 1;
+}}
+return users_data;
+"""
+
 
 ##########################################
 
@@ -118,3 +132,14 @@ class Parser:
             for user_id, groups in zip(pack, users_groups):
                 user_groups[user_id] = groups
         return user_groups
+
+    def get_users_data(self, user_ids: List[int]):
+        user_packs = [user_ids[i:i + 1000] for i in range(0, len(user_ids), 1000)]
+        users_data = dict()
+        for pack in user_packs:
+            data = self.api.users_get(pack, fields=['sex, bdate', 'verified', 'city', 'country', 'education',
+                                                    'last_seen', 'followers_count', 'can_write_private_message',
+                                                    'can_send_friend_request'])
+            for d in data:
+                users_data[d['id']] = d
+        return users_data
