@@ -35,9 +35,9 @@ class API:
         params = locals()
         return self._call('groups.getMembers', params)
 
-    def users_get(self, user_ids: List[int], fields: List[str]):
+    def users_get(self, user_ids: List[int], fields: List[str] = None):
         params = {
-            'user_ids': str(user_ids)[1:-1],
-            'fields': str(fields)[1:-1]
+            'user_ids': str(user_ids)[1:-1].replace(' ', ''),
+            'fields': None if fields is None else str(fields)[1:-1]
         }
         self._call('users.get', params)
