@@ -184,7 +184,7 @@ class Parser:
                 user_groups[user_id] = groups
         return user_groups
 
-    def get_users_data(self, user_ids: List[int]):
+    def get_users_data(self, user_ids: List[int]) -> List[UserData]:
         user_packs = [user_ids[i:i + 1000] for i in range(0, len(user_ids), 1000)]
         users_data = []
         for pack in user_packs:
