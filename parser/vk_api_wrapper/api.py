@@ -1,5 +1,6 @@
 import requests
 import time
+from typing import List
 
 __all__ = ['API']
 
@@ -33,3 +34,10 @@ class API:
     def groups_get_members(self, group_id: int):
         params = locals()
         return self._call('groups.getMembers', params)
+
+    def users_get(self, user_ids: List[int], fields: List[str]):
+        params = {
+            'user_ids': str(user_ids)[1:-1],
+            'fields': str(fields)[1:-1]
+        }
+        self._call('users.get', params)
