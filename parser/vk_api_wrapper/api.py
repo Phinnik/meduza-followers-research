@@ -40,4 +40,4 @@ class API:
             'user_ids': str(user_ids)[1:-1].replace(' ', ''),
             'fields': None if fields is None else str(fields)[1:-1]
         }
-        self._call('users.get', params)
+        return self._call('users.get', params)
