@@ -212,7 +212,6 @@ class Main:
                     json.dump(self.user_groups_df, f, ensure_ascii=False, indent=2)
             logger.debug('Finish parsing user groups')
 
-
     def run(self):
         """
         Runs parsing cycle
